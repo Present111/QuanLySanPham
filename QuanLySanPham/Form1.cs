@@ -7,13 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Data.SqlClient;
 
 namespace QuanLySanPham
 {
 
     public partial class Form1 : Form
     {
+        string connectstring = @"Data Source=MSI\SQLEXPRESS;Initial Catalog=QuanLySanPham;Integrated Security=True;TrustServerCertificate=True";
+        SqlConnection conn;
+        SqlCommand cmd;
+        SqlDataAdapter adt;
+        DataTable dt=new DataTable();
         public Form1()
         {
             InitializeComponent();
@@ -104,7 +109,43 @@ namespace QuanLySanPham
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // Tạo kết nối
+            conn = new SqlConnection(connectstring);
 
+            try
+            {
+                // Đặt AutoGenerateColumns thành false
+                dataGridView1.AutoGenerateColumns = false;
+
+                // Thiết lập DataPropertyName cho mỗi cột
+                dataGridView1.Columns["MaSP"].DataPropertyName = "MaSP";
+                dataGridView1.Columns["TenSP"].DataPropertyName = "TenSP";
+                dataGridView1.Columns["SoLuong"].DataPropertyName = "SoLuong";
+                dataGridView1.Columns["DonGia"].DataPropertyName = "DonGia";
+                dataGridView1.Columns["XuatXu"].DataPropertyName = "XuatXu";
+                dataGridView1.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
+
+                // Mở kết nối
+                conn.Open();
+
+                // Tạo câu lệnh SQL
+                cmd = new SqlCommand("SELECT MaSP, TenSP, SoLuong, DonGia, XuatXu, NgayHetHan FROM SanPham", conn);
+
+                // Tạo SqlDataAdapter để điền dữ liệu vào DataTable
+                adt = new SqlDataAdapter(cmd);
+                adt.Fill(dt);
+
+                // Gán DataTable làm nguồn dữ liệu cho DataGridView
+                dataGridView1.DataSource = dt;
+
+                // Đóng kết nối
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                // Hiển thị thông báo lỗi
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
         }
 
         private void groupBox3_Paint(object sender, PaintEventArgs e)
@@ -171,6 +212,11 @@ namespace QuanLySanPham
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
         {
 
         }
