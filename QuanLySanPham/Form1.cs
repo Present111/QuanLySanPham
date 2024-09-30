@@ -343,5 +343,67 @@ namespace QuanLySanPham
                 MessageBox.Show("Vui lòng chọn một hàng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+        
+        private void button3_Click(object sender, EventArgs e)
+        {
+            // Chuyển dữ liệu từ DataGridView vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Sử dụng LINQ để tìm sản phẩm có đơn giá cao nhất
+            var sanPhamCoDonGiaCaoNhat = danhSachSanPham.OrderByDescending(p => p.DonGia).FirstOrDefault();
+
+            // Kiểm tra nếu tìm thấy sản phẩm có đơn giá cao nhất
+            if (sanPhamCoDonGiaCaoNhat != null)
+            {
+                // Tạo một danh sách chỉ chứa sản phẩm có đơn giá cao nhất
+                List<SanPham> sanPhamCaoNhatList = new List<SanPham> { sanPhamCoDonGiaCaoNhat };
+
+                // Thiết lập lại cột và thuộc tính DataPropertyName cho dataGridView2
+                dataGridView3.AutoGenerateColumns = false;
+                dataGridView3.Columns.Clear();
+                dataGridView3.Columns.Add("MaSP", "Mã SP");
+                dataGridView3.Columns.Add("TenSP", "Tên SP");
+                dataGridView3.Columns.Add("SoLuong", "Số Lượng");
+                dataGridView3.Columns.Add("DonGia", "Đơn Giá");
+                dataGridView3.Columns.Add("XuatXu", "Xuất xứ");
+                dataGridView3.Columns.Add("NgayHetHan", "Ngày hết hạn");
+
+                dataGridView3.Columns["MaSP"].DataPropertyName = "MaSP";
+                dataGridView3.Columns["TenSP"].DataPropertyName = "TenSP";
+                dataGridView3.Columns["SoLuong"].DataPropertyName = "SoLuong";
+                dataGridView3.Columns["DonGia"].DataPropertyName = "DonGia";
+                dataGridView3.Columns["XuatXu"].DataPropertyName = "XuatXu";
+                dataGridView3.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
+
+                // Gán dữ liệu cho dataGridView2
+                dataGridView3.DataSource = sanPhamCaoNhatList;
+            }
+            else
+            {
+                MessageBox.Show("Không có sản phẩm nào trong danh sách!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
