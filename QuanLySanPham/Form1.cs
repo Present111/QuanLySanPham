@@ -298,5 +298,50 @@ namespace QuanLySanPham
                 }
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra xem có hàng nào được chọn hay không
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Lấy mã sản phẩm (hoặc một giá trị duy nhất khác) từ hàng được chọn
+                string maSP = dataGridView1.SelectedRows[0].Cells["MaSP"].Value.ToString();
+
+                // Xác nhận lại việc xóa hàng
+                DialogResult result = MessageBox.Show("Bạn có chắc muốn xóa hàng đã chọn?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Xóa hàng khỏi cơ sở dữ liệu
+                    using (SqlConnection conn = new SqlConnection(connectstring))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            string sql = "DELETE FROM SanPham WHERE MaSP = @MaSP";
+
+                            using (SqlCommand cmd = new SqlCommand(sql, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@MaSP", maSP);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            MessageBox.Show("Xóa sản phẩm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Xóa hàng khỏi DataGridView
+                            dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một hàng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 }
