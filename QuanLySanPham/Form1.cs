@@ -218,7 +218,85 @@ namespace QuanLySanPham
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // Lấy dữ liệu từ các ô nhập liệu
+            string maSP = txtMaSP.Text;
+            string tenSP = txtTenSP.Text;
+            int soLuong = int.Parse(txtSoLuong.Text);
+            decimal donGia = decimal.Parse(txtDonGia.Text);
+            string xuatXu = txtXuatXu.Text;
+            DateTime ngayHetHan = dtimeNgayHetHan.Value;
 
+            // Kết nối cơ sở dữ liệu
+            using (SqlConnection conn = new SqlConnection(connectstring))
+            {
+                try
+                {
+                    // Mở kết nối
+                    conn.Open();
+
+                    // Câu lệnh SQL để thêm sản phẩm
+                    string sql = "INSERT INTO SanPham (MaSP, TenSP, SoLuong, DonGia, XuatXu, NgayHetHan) " +
+                                 "VALUES (@MaSP, @TenSP, @SoLuong, @DonGia, @XuatXu, @NgayHetHan)";
+
+                    // Tạo đối tượng SqlCommand
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        // Thêm tham số vào câu lệnh SQL
+                        cmd.Parameters.AddWithValue("@MaSP", maSP);
+                        cmd.Parameters.AddWithValue("@TenSP", tenSP);
+                        cmd.Parameters.AddWithValue("@SoLuong", soLuong);
+                        cmd.Parameters.AddWithValue("@DonGia", donGia);
+                        cmd.Parameters.AddWithValue("@XuatXu", xuatXu);
+                        cmd.Parameters.AddWithValue("@NgayHetHan", ngayHetHan);
+
+                        // Thực thi câu lệnh SQL
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // Thông báo lưu thành công
+                    MessageBox.Show("Lưu sản phẩm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Tải lại dữ liệu vào DataGridView
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    // Hiển thị thông báo lỗi
+                    MessageBox.Show("Lỗi: " + ex.Message);
+                }
+            }
+        }
+        // Hàm tải dữ liệu vào DataGridView
+        private void LoadData()
+        {
+            // Xóa dữ liệu cũ trong DataTable
+            dt.Clear();
+
+            // Kết nối cơ sở dữ liệu
+            using (SqlConnection conn = new SqlConnection(connectstring))
+            {
+                try
+                {
+                    // Mở kết nối
+                    conn.Open();
+
+                    // Tạo câu lệnh SQL
+                    string sql = "SELECT MaSP, TenSP, SoLuong, DonGia, XuatXu, NgayHetHan FROM SanPham";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        SqlDataAdapter adt = new SqlDataAdapter(cmd);
+                        adt.Fill(dt);
+                    }
+
+                    // Gán DataTable làm nguồn dữ liệu cho DataGridView
+                    dataGridView1.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    // Hiển thị thông báo lỗi
+                    MessageBox.Show("Lỗi: " + ex.Message);
+                }
+            }
         }
     }
 }
