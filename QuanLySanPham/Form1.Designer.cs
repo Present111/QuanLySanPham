@@ -452,6 +452,7 @@
             this.button8.TabIndex = 24;
             this.button8.Text = "Kiểm tra kho có SP quá hạn hay không?";
             this.button8.UseVisualStyleBackColor = false;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 

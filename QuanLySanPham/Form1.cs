@@ -668,5 +668,41 @@ namespace QuanLySanPham
             dataGridView1.Columns["XuatXu"].DataPropertyName = "XuatXu";
             dataGridView1.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
         }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            // Chuyển dữ liệu từ DataGridView1 vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Sử dụng LINQ to Objects để kiểm tra xem có sản phẩm nào quá hạn
+            bool coSanPhamQuaHan = danhSachSanPham.Any(p => p.NgayHetHan < DateTime.Today);
+
+            // Hiển thị kết quả bằng MessageBox
+            if (coSanPhamQuaHan)
+            {
+                MessageBox.Show("Có sản phẩm quá hạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Không có sản phẩm nào quá hạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 }
