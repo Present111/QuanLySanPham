@@ -777,5 +777,60 @@ namespace QuanLySanPham
 
             MessageBox.Show($"Đã xóa {sanPhamQuaHan.Count} sản phẩm quá hạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            // Bước 1: Chuyển tất cả dữ liệu từ DataGridView1 vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Kiểm tra xem danh sách có sản phẩm nào không
+            if (danhSachSanPham.Count == 0)
+            {
+                MessageBox.Show("Không có sản phẩm nào để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Bước 2: Xóa toàn bộ sản phẩm trong cơ sở dữ liệu
+            using (SqlConnection conn = new SqlConnection(connectstring))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "DELETE FROM SanPham"; // Câu lệnh SQL để xóa toàn bộ sản phẩm
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show("Đã xóa toàn bộ sản phẩm khỏi cơ sở dữ liệu.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm khỏi cơ sở dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // Bước 3: Xóa dữ liệu khỏi dataGridView1
+            dataGridView1.DataSource = null; // Đặt nguồn dữ liệu về null để xóa tất cả sản phẩm hiển thị
+        }
     }
 }
