@@ -432,6 +432,7 @@
             this.button10.TabIndex = 26;
             this.button10.Text = "Xóa toàn bộ SP quá hạn";
             this.button10.UseVisualStyleBackColor = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button9
             // 

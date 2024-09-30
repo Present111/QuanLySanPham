@@ -704,5 +704,78 @@ namespace QuanLySanPham
                 MessageBox.Show("Không có sản phẩm nào quá hạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            // Bước 1: Chuyển dữ liệu từ DataGridView1 vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Bước 2: Lọc danh sách các sản phẩm quá hạn
+            var sanPhamQuaHan = danhSachSanPham.Where(p => p.NgayHetHan < DateTime.Today).ToList();
+
+            if (sanPhamQuaHan.Count == 0)
+            {
+                MessageBox.Show("Không có sản phẩm nào quá hạn để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Bước 3: Xóa các sản phẩm quá hạn khỏi cơ sở dữ liệu
+            using (SqlConnection conn = new SqlConnection(connectstring))
+            {
+                try
+                {
+                    conn.Open();
+
+                    foreach (var sanPham in sanPhamQuaHan)
+                    {
+                        string sql = "DELETE FROM SanPham WHERE MaSP = @MaSP";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@MaSP", sanPham.MaSP);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm khỏi cơ sở dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // Bước 4: Xóa sản phẩm quá hạn khỏi DataGridView
+            var danhSachConLai = danhSachSanPham.Where(p => p.NgayHetHan >= DateTime.Today).ToList();
+
+            // Cập nhật lại DataGridView1 với danh sách sản phẩm còn lại
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = danhSachConLai;
+
+            // Thiết lập lại DataPropertyName cho các cột (nếu cần)
+            dataGridView1.Columns["MaSP"].DataPropertyName = "MaSP";
+            dataGridView1.Columns["TenSP"].DataPropertyName = "TenSP";
+            dataGridView1.Columns["SoLuong"].DataPropertyName = "SoLuong";
+            dataGridView1.Columns["DonGia"].DataPropertyName = "DonGia";
+            dataGridView1.Columns["XuatXu"].DataPropertyName = "XuatXu";
+            dataGridView1.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
+
+            MessageBox.Show($"Đã xóa {sanPhamQuaHan.Count} sản phẩm quá hạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
