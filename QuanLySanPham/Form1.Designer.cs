@@ -62,7 +62,7 @@
             this.NgayHetHan = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.txt = new System.Windows.Forms.TextBox();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
@@ -402,7 +402,7 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.textBox8);
+            this.groupBox4.Controls.Add(this.txt);
             this.groupBox4.Controls.Add(this.button10);
             this.groupBox4.Controls.Add(this.button9);
             this.groupBox4.Controls.Add(this.button8);
@@ -415,13 +415,13 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Paint += new System.Windows.Forms.PaintEventHandler(this.groupBox4_Paint);
             // 
-            // textBox8
+            // txt
             // 
-            this.textBox8.Location = new System.Drawing.Point(131, 19);
-            this.textBox8.Multiline = true;
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(142, 47);
-            this.textBox8.TabIndex = 23;
+            this.txt.Location = new System.Drawing.Point(131, 19);
+            this.txt.Multiline = true;
+            this.txt.Name = "txt";
+            this.txt.Size = new System.Drawing.Size(142, 47);
+            this.txt.TabIndex = 23;
             // 
             // button10
             // 
@@ -462,6 +462,7 @@
             this.button7.TabIndex = 23;
             this.button7.Text = "Xóa SP theo xuất xứ bất kỳ:";
             this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // label10
             // 
@@ -587,7 +588,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn XuatXu;
         private System.Windows.Forms.DataGridViewTextBoxColumn NgayHetHan;
         private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox txt;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button8;

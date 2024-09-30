@@ -109,6 +109,8 @@ namespace QuanLySanPham
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            dataGridView1.ReadOnly = true;
+            dataGridView3.ReadOnly = true;
             // Tạo kết nối
             conn = new SqlConnection(connectstring);
 
@@ -587,6 +589,84 @@ namespace QuanLySanPham
             {
                 MessageBox.Show("Không có sản phẩm nào trong khoảng đơn giá này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            // Lấy giá trị xuất xứ từ ô txt
+            string xuatXuCanXoa = txt.Text.Trim();
+
+            if (string.IsNullOrEmpty(xuatXuCanXoa))
+            {
+                MessageBox.Show("Vui lòng nhập xuất xứ để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Bước 1: Xóa dữ liệu khỏi cơ sở dữ liệu
+            using (SqlConnection conn = new SqlConnection(connectstring))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "DELETE FROM SanPham WHERE XuatXu = @XuatXu";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@XuatXu", xuatXuCanXoa);
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show($"Đã xóa {rowsAffected} sản phẩm có xuất xứ '{xuatXuCanXoa}' khỏi cơ sở dữ liệu.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Không có sản phẩm nào có xuất xứ '{xuatXuCanXoa}' trong cơ sở dữ liệu.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm khỏi cơ sở dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // Bước 2: Xóa dữ liệu khỏi DataGridView
+            // Chuyển dữ liệu từ DataGridView1 vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Sử dụng LINQ to Objects để tạo danh sách sản phẩm không có xuất xứ cần xóa
+            var danhSachConLai = danhSachSanPham.Where(p => !p.XuatXu.Equals(xuatXuCanXoa, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            // Cập nhật lại DataGridView1 với danh sách sản phẩm còn lại
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = danhSachConLai;
+
+            // Thiết lập lại DataPropertyName cho các cột (nếu cần)
+            dataGridView1.Columns["MaSP"].DataPropertyName = "MaSP";
+            dataGridView1.Columns["TenSP"].DataPropertyName = "TenSP";
+            dataGridView1.Columns["SoLuong"].DataPropertyName = "SoLuong";
+            dataGridView1.Columns["DonGia"].DataPropertyName = "DonGia";
+            dataGridView1.Columns["XuatXu"].DataPropertyName = "XuatXu";
+            dataGridView1.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
         }
     }
 }
