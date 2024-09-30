@@ -45,8 +45,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.txtDGmax = new System.Windows.Forms.TextBox();
+            this.txtDGmin = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -242,8 +242,8 @@
             // 
             this.groupBox2.BackColor = System.Drawing.Color.LightBlue;
             this.groupBox2.Controls.Add(this.dataGridView3);
-            this.groupBox2.Controls.Add(this.textBox7);
-            this.groupBox2.Controls.Add(this.textBox6);
+            this.groupBox2.Controls.Add(this.txtDGmax);
+            this.groupBox2.Controls.Add(this.txtDGmin);
             this.groupBox2.Controls.Add(this.button6);
             this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.button4);
@@ -257,21 +257,21 @@
             this.groupBox2.Paint += new System.Windows.Forms.PaintEventHandler(this.groupBox2_Paint);
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
-            // textBox7
+            // txtDGmax
             // 
-            this.textBox7.Location = new System.Drawing.Point(564, 19);
-            this.textBox7.Multiline = true;
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(36, 28);
-            this.textBox7.TabIndex = 22;
+            this.txtDGmax.Location = new System.Drawing.Point(564, 19);
+            this.txtDGmax.Multiline = true;
+            this.txtDGmax.Name = "txtDGmax";
+            this.txtDGmax.Size = new System.Drawing.Size(36, 28);
+            this.txtDGmax.TabIndex = 22;
             // 
-            // textBox6
+            // txtDGmin
             // 
-            this.textBox6.Location = new System.Drawing.Point(509, 19);
-            this.textBox6.Multiline = true;
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(39, 28);
-            this.textBox6.TabIndex = 18;
+            this.txtDGmin.Location = new System.Drawing.Point(509, 19);
+            this.txtDGmin.Multiline = true;
+            this.txtDGmin.Name = "txtDGmin";
+            this.txtDGmin.Size = new System.Drawing.Size(39, 28);
+            this.txtDGmin.TabIndex = 18;
             // 
             // button6
             // 
@@ -292,6 +292,7 @@
             this.button5.TabIndex = 20;
             this.button5.Text = "Xuất toàn bộ SP quá hạn";
             this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
             // 
@@ -302,6 +303,7 @@
             this.button4.TabIndex = 19;
             this.button4.Text = "1 SP từ Nhật Bản";
             this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -570,8 +572,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox txtDGmax;
+        private System.Windows.Forms.TextBox txtDGmin;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
