@@ -467,7 +467,59 @@ namespace QuanLySanPham
 
         private void button5_Click(object sender, EventArgs e)
         {
+            // Đặt dataGridView3 về null trước khi hiển thị kết quả mới
+            dataGridView3.DataSource = null;
 
+            // Chuyển dữ liệu từ DataGridView1 vào danh sách sản phẩm
+            List<SanPham> danhSachSanPham = new List<SanPham>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["MaSP"].Value != null) // Kiểm tra tránh các hàng trống
+                {
+                    SanPham sanPham = new SanPham
+                    {
+                        MaSP = row.Cells["MaSP"].Value.ToString(),
+                        TenSP = row.Cells["TenSP"].Value.ToString(),
+                        SoLuong = Convert.ToInt32(row.Cells["SoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["DonGia"].Value),
+                        XuatXu = row.Cells["XuatXu"].Value.ToString(),
+                        NgayHetHan = Convert.ToDateTime(row.Cells["NgayHetHan"].Value)
+                    };
+                    danhSachSanPham.Add(sanPham);
+                }
+            }
+
+            // Lọc danh sách các sản phẩm quá hạn so với ngày hôm nay
+            var sanPhamQuaHan = danhSachSanPham.Where(p => p.NgayHetHan < DateTime.Today).ToList();
+
+            // Kiểm tra nếu có sản phẩm quá hạn
+            if (sanPhamQuaHan.Count > 0)
+            {
+                // Thiết lập lại cột và thuộc tính DataPropertyName cho dataGridView3
+                dataGridView3.AutoGenerateColumns = false;
+                dataGridView3.Columns.Clear();
+                dataGridView3.Columns.Add("MaSP", "Mã SP");
+                dataGridView3.Columns.Add("TenSP", "Tên SP");
+                dataGridView3.Columns.Add("SoLuong", "Số Lượng");
+                dataGridView3.Columns.Add("DonGia", "Đơn Giá");
+                dataGridView3.Columns.Add("XuatXu", "Xuất xứ");
+                dataGridView3.Columns.Add("NgayHetHan", "Ngày hết hạn");
+
+                dataGridView3.Columns["MaSP"].DataPropertyName = "MaSP";
+                dataGridView3.Columns["TenSP"].DataPropertyName = "TenSP";
+                dataGridView3.Columns["SoLuong"].DataPropertyName = "SoLuong";
+                dataGridView3.Columns["DonGia"].DataPropertyName = "DonGia";
+                dataGridView3.Columns["XuatXu"].DataPropertyName = "XuatXu";
+                dataGridView3.Columns["NgayHetHan"].DataPropertyName = "NgayHetHan";
+
+                // Gán danh sách sản phẩm quá hạn cho dataGridView3
+                dataGridView3.DataSource = sanPhamQuaHan;
+            }
+            else
+            {
+                MessageBox.Show("Không có sản phẩm nào quá hạn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }
